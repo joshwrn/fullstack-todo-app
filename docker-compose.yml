@@ -1,0 +1,20 @@
+# name: prisma-prisma
+# # For connection urls to the following instances, see
+# # https://github.com/prisma/prisma/blob/main/TESTING.md#environment-variables
+name: prisma-prisma
+services:
+  mysql:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mydb
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:
