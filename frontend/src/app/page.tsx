@@ -26,6 +26,7 @@ export default function Home() {
     },
     {
       staleTime: Infinity,
+      refetchOnMount: true,
     }
   )
 

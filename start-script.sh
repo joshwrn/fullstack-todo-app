@@ -15,7 +15,7 @@ npm run docker:up
 npm install && cd frontend && npm install --legacy-peer-deps && wait-on tcp:3306 && npm run dev & 
 frontend_pid=$!
 
-npm install && cd backend && npm install --legacy-peer-deps && wait-on tcp:3306 && npm run dev & 
+cd backend && npm install --legacy-peer-deps && npx prisma generate && npx prisma migrate dev &&  wait-on tcp:3306 && npm run dev & 
 backend_pid=$!
 
 wait $frontend_pid
