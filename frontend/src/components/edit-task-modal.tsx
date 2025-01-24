@@ -8,6 +8,7 @@ import { useQueryParams } from '../hooks/use-query-params'
 import { Colors } from '@/components/colors'
 import { Modal } from './modal'
 import clsx from 'clsx'
+import { QUERY_KEYS } from '@/constants/query-keys'
 
 export const EditTask: React.FC = () => {
   const id = useSearchParams().get('id')
@@ -15,7 +16,7 @@ export const EditTask: React.FC = () => {
   const client = useQueryClient()
   const queryParams = useQueryParams()
   const task = client
-    .getQueryData<Task[]>(['tasks'])
+    .getQueryData<Task[]>(QUERY_KEYS.tasks)
     ?.find((task) => task.id === id)
   const taskRef = React.useRef({ ...task })
 

@@ -6,14 +6,15 @@ import { useMutation, useQueryClient } from 'react-query'
 import { useQueryParams } from '@/hooks/use-query-params'
 import { Task } from '@/schemas/task-schema'
 import { BASE_URL } from '@/constants/base-url'
+import { QUERY_KEYS } from '@/constants/query-keys'
 
 export const DeleteTask: React.FC = () => {
   const id = useSearchParams().get('delete')
   const client = useQueryClient()
   const queryParams = useQueryParams()
-  const tasks = client.getQueryData<Task[]>(['tasks'])
+  const tasks = client.getQueryData<Task[]>(QUERY_KEYS.tasks)
   const task = client
-    .getQueryData<Task[]>(['tasks'])
+    .getQueryData<Task[]>(QUERY_KEYS.tasks)
     ?.find((task) => task.id === id)
   const setTaskData = useSetTaskData()
 
