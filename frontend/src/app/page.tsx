@@ -6,11 +6,13 @@ import { Task } from '@/schemas/task-schema'
 import { GoTrash as TrashIcon } from 'react-icons/go'
 import { useSetTaskData } from '../hooks/use-set-task-data'
 import { useQueryParams } from '../hooks/use-query-params'
-import { EditTask } from './edit-task'
+import { EditTask } from '../components/edit-task-modal'
 import { useSearchParams } from 'next/navigation'
 import clsx from 'clsx'
 import { returnColor } from '@/components/colors'
 import { QUERY_KEYS } from '@/constants/query-keys'
+import { DeleteTask } from '@/components/delete-task-modal'
+import { format } from 'date-fns'
 
 export default function Home() {
   const setTaskData = useSetTaskData()
@@ -46,24 +48,6 @@ export default function Home() {
     }
   )
 
-  const deleteTaskMutation = useMutation(
-    ['deleteTask'],
-    async (input: { id: string }) => {
-      const taskToDelete = query.data?.find((task) => task.id === input.id)
-      const taskIndex = query.data?.findIndex((task) => task.id === input.id)
-      setTaskData.remove(input.id)
-      try {
-        await fetch(`${BASE_URL}/tasks/${input.id}`, {
-          method: 'DELETE',
-        })
-        setTaskData.remove(input.id)
-      } catch (error) {
-        setTaskData.add(taskToDelete, taskIndex)
-        console.error(error)
-      }
-    }
-  )
-
   return (
     <div className="flex flex-col items-center justify-start h-screen w-screen bg-slate-950 p-10">
       <main className="flex flex-col items-center justify-center w-full p-4 bg-slate-900 max-w-xl rounded-xl">
@@ -74,12 +58,13 @@ export default function Home() {
             className="border border-slate-700 p-2 rounded-lg bg-slate-800"
           >
             <button>
-              <p className="text-slate-300">Create Task</p>
+              <p className="text-slate-300 text-sm">Create Task</p>
             </button>
           </Link>
         </header>
         <section className="flex w-full flex-col items-center justify-center gap-4 p-4 text-slate-300">
           {searchParams.get('id') && <EditTask />}
+          {searchParams.get('delete') && <DeleteTask />}
           {query.data?.map((task) => (
             <div
               className="flex w-full border border-slate-700 p-2 rounded-lg bg-slate-800 cursor-pointer gap-2 items-center"
@@ -109,11 +94,14 @@ export default function Home() {
                 )}
               />
               {task.title}
+              <p className="ml-auto text-xs">
+                {format(task.createdAt, 'MM/dd/yyyy')}
+              </p>
               <button
-                className="ml-auto"
+                className="rounded-full hover:bg-slate-900 p-1"
                 onClick={(e) => {
                   e.stopPropagation()
-                  deleteTaskMutation.mutate({ id: task.id })
+                  queryParams.push('delete', task.id)
                 }}
               >
                 <TrashIcon />

@@ -42,13 +42,8 @@ app.post('/tasks', async (req, res) => {
 app.patch('/tasks/:id', async (req, res) => {
   const { id } = req.params
   const { update } = req.body as { update: Prisma.TaskUpdateInput }
-  if (!update.title) {
+  if (update.title === '') {
     res.status(400).json({ message: 'Title is required' })
-    return
-  }
-  if (!update.color) {
-    console.log('color is required')
-    res.status(400).json({ message: 'Color is required' })
     return
   }
   const updatedTask = await prisma.task.update({
